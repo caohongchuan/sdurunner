@@ -7,6 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @MapperScan(basePackages = "com.caohongchuan.sdurunner.mapper")
 
+/**
+ * @author caohongchuan
+ * @since 1.0
+ */
 public class SdurunnerApplication {
 
     public static void main(String[] args) {
