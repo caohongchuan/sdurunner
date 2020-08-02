@@ -38,7 +38,7 @@ public class SessionConfiguration implements HandlerInterceptor{
         String sessionId = (String)request.getSession().getAttribute("user");
         if (sessionId == null) {
 
-            Result result = new Result(401);
+            Result result = new Result(401, "server error");
             String jsonObject = JSONObject.toJSONString(result);
             PrintWriter writer = null;
             response.setCharacterEncoding("UTF-8");

@@ -7,6 +7,8 @@ package com.caohongchuan.sdurunner.service;
  */
 
 import com.caohongchuan.sdurunner.domain.Reaction;
+import com.caohongchuan.sdurunner.exception.CommonEnum;
+import com.caohongchuan.sdurunner.exception.RunnerException;
 import com.caohongchuan.sdurunner.mapper.CommitMapper;
 import com.caohongchuan.sdurunner.mapper.UserMapper;
 import com.caohongchuan.sdurunner.result.commitResult;
@@ -37,7 +39,7 @@ public class CommitSerivce {
         String nickname = reaction.getNickname();
         Integer uid = userMapper.getUserId(nickname);
         if(uid == null){
-            return 303;
+            throw new RunnerException(CommonEnum.USERUNEXITED);
         }
         reaction.setUid(uid);
         reaction.setType(2);
@@ -50,7 +52,7 @@ public class CommitSerivce {
             try {
                 success = commitMapper.newCommit(reaction);
             }catch (Exception exception){
-                return 340;
+                throw new RunnerException(CommonEnum.ADDCOMMITERROR);
             }
 
         }else if(type == 1){
@@ -65,7 +67,7 @@ public class CommitSerivce {
         if(success > 0){
             return 200;
         }else{
-            return 340;
+            throw new RunnerException(CommonEnum.ADDCOMMITERROR);
         }
     }
 
@@ -81,7 +83,7 @@ public class CommitSerivce {
         String nickname = reaction.getNickname();
         Integer uid = userMapper.getUserId(nickname);
         if(uid == null){
-            return 303;
+            throw new RunnerException(CommonEnum.USERUNEXITED);
         }
         reaction.setUid(uid);
         reaction.setType(1);
@@ -94,7 +96,7 @@ public class CommitSerivce {
             try {
                 success = commitMapper.newCommit(reaction);
             }catch (Exception exception){
-                return 340;
+                throw new RunnerException(CommonEnum.ADDLIKEERROR);
             }
 
         }else if(type == 1){
@@ -109,7 +111,7 @@ public class CommitSerivce {
         if(success > 0){
             return 200;
         }else{
-            return 340;
+            throw new RunnerException(CommonEnum.ADDLIKEERROR);
         }
     }
 
@@ -125,7 +127,7 @@ public class CommitSerivce {
             commitList = commitMapper.getCommit(pid);
         }catch (Exception exception){
             //获得失败
-            return new commitResult(341, null);
+            throw new RunnerException(CommonEnum.DELETECOMMITERROR);
         }
 
         //添加用户名字
@@ -136,7 +138,7 @@ public class CommitSerivce {
             reaction.setDistance(userMapper.getRunDistance(uid));
             reaction.setProfilepic(userMapper.getUserProfilepic(uid));
         }
-        return new commitResult(200, commitList);
+        return new commitResult(CommonEnum.SUCCESS, commitList);
     }
 
     /**
@@ -151,7 +153,7 @@ public class CommitSerivce {
             commitList = commitMapper.getLike(pid);
         }catch (Exception exception){
             //获得失败
-            return new commitResult(341, null);
+            throw new RunnerException(CommonEnum.GETLIKEERROR);
         }
 
         //添加用户名字
@@ -162,7 +164,7 @@ public class CommitSerivce {
             reaction.setDistance(userMapper.getRunDistance(uid));
             reaction.setProfilepic(userMapper.getUserProfilepic(uid));
         }
-        return new commitResult(200, commitList);
+        return new commitResult(CommonEnum.SUCCESS, commitList);
     }
 
     /**
@@ -177,19 +179,19 @@ public class CommitSerivce {
 
         Integer uid = userMapper.getUserId(nickname);
         if(uid == null){
-            return 303;
+            throw new RunnerException(CommonEnum.USERUNEXITED);
         }
 
         Integer committype;
         try {
             committype = commitMapper.getType(pid, uid);
         }catch (Exception exception){
-            return 342;
+            throw new RunnerException(CommonEnum.DELETECOMMITERROR);
         }
 
 
         if(committype == null){
-            return 342;
+            throw new RunnerException(CommonEnum.DELETECOMMITERROR);
 
         }else if(committype == 2){
             success = commitMapper.deleteCommit(pid, uid);
@@ -197,15 +199,15 @@ public class CommitSerivce {
             if(success > 0){
                 return 200;
             }else{
-                return 342;
+                throw new RunnerException(CommonEnum.DELETECOMMITERROR);
             }
         }else if(committype == 3){
             String str = "";
             commitMapper.setCommit2(pid, uid, 1, str);
             return 200;
-        }else{
 
-            return 342;
+        }else{
+            throw new RunnerException(CommonEnum.DELETECOMMITERROR);
         }
 
 
@@ -269,7 +271,7 @@ public class CommitSerivce {
             commitList = commitMapper.getCommitAll(pid);
         }catch (Exception exception){
             //获得失败
-            return new commitResult(341, null);
+            throw new RunnerException(CommonEnum.GETCOMMITERROR);
         }
 
         //添加用户名字
@@ -280,7 +282,7 @@ public class CommitSerivce {
             reaction.setDistance(userMapper.getRunDistance(uid));
             reaction.setProfilepic(userMapper.getUserProfilepic(uid));
         }
-        return new commitResult(200, commitList);
+        return new commitResult(CommonEnum.SUCCESS, commitList);
     }
 
 

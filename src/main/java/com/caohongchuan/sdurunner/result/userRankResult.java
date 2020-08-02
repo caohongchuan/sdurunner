@@ -1,6 +1,7 @@
 package com.caohongchuan.sdurunner.result;
 
 import com.caohongchuan.sdurunner.domain.userRank;
+import com.caohongchuan.sdurunner.exception.BaseErrorInfoInterface;
 
 import java.util.List;
 
@@ -15,11 +16,15 @@ public class userRankResult extends Result {
 
     private List<userRank> follow;
 
-    public userRankResult(int code, List<userRank> follow){
-        super(code);
+    public userRankResult(int code, String errormsg, List<userRank> follow) {
+        super(code, errormsg);
         this.follow = follow;
     }
 
+    public userRankResult(BaseErrorInfoInterface baseErrorInfoInterface, List<userRank> follow){
+        super(baseErrorInfoInterface);
+        this.follow = follow;
+    }
     public List<userRank> getFollow() {
         return follow;
     }

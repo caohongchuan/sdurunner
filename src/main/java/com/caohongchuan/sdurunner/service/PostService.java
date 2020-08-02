@@ -8,6 +8,8 @@ package com.caohongchuan.sdurunner.service;
 
 import com.caohongchuan.sdurunner.domain.Post;
 import com.caohongchuan.sdurunner.domain.Reaction;
+import com.caohongchuan.sdurunner.exception.CommonEnum;
+import com.caohongchuan.sdurunner.exception.RunnerException;
 import com.caohongchuan.sdurunner.mapper.PostMapper;
 import com.caohongchuan.sdurunner.mapper.UserMapper;
 import com.caohongchuan.sdurunner.result.postResult;
@@ -43,7 +45,7 @@ public class PostService {
         String nickname = post.getNickname();
         Integer uid = userMapper.getUserId(nickname);
         if(uid == null){
-            return new postResult(303, null);
+            throw new RunnerException(CommonEnum.USERUNEXITED);
         }
         post.setUid(uid);
 
@@ -61,14 +63,14 @@ public class PostService {
             post.setPid(pid);
             getPost.add(post);
         }catch (Exception exception){
-            return new postResult(330, null);
+            throw new RunnerException(CommonEnum.INSERTPOSTERROR);
         }
 
 
         if(success > 0){
-            return new postResult(200, getPost);
+            return new postResult(CommonEnum.SUCCESS, getPost);
         }else{
-            return new postResult(330, null);
+            throw new RunnerException(CommonEnum.INSERTPOSTERROR);
         }
     }
 
@@ -123,24 +125,24 @@ public class PostService {
         //判断post是否为自己的
         Integer uid = userMapper.getUserId(post.getNickname());
         if(uid == null){
-            return 303;
+            throw new RunnerException(CommonEnum.USERUNEXITED);
         }
         //判断post是否为本人的
         Integer getDistance = postMapper.getDistance(post.getPid(), uid);
         if(getDistance == null){
-            return 400;
+            throw new RunnerException(CommonEnum.CANTCHANGEPOST);
         }
 
         int success;
         try {
             success = postMapper.updatePost(post);
         }catch (Exception exception){
-            return 332;
+            throw new RunnerException(CommonEnum.UPDATEPOSTERROR);
         }
         if(success > 0){
             return 200;
         }else{
-            return 332;
+            throw new RunnerException(CommonEnum.UPDATEPOSTERROR);
         }
     }
 
@@ -149,13 +151,11 @@ public class PostService {
      * @param nickname
      * @return 动态列表 @link{postResult}
      */
-
-
     public postResult getFriendPost(String nickname){
 
         Integer uid = userMapper.getUserId(nickname);
         if(uid == null){
-            return new postResult(303, null);
+            throw new RunnerException(CommonEnum.USERUNEXITED);
         }
 
         ArrayList<Post> friendPost;
@@ -187,19 +187,16 @@ public class PostService {
 
             Collections.sort(friendPost);
         }catch (Exception exception){
-            return new postResult(333, null);
+            throw new RunnerException(CommonEnum.GETFRIENDPOSTERROR);
         }
-        return new postResult(200, friendPost);
+        return new postResult(CommonEnum.SUCCESS, friendPost);
     }
 
     /**
      * 随机获取动态列表
      * @return 动态列表 @link{postResult}
      */
-
-
     public postResult getRandomPost(){
-
 
         ArrayList<Post> friendPost;
         try {
@@ -231,8 +228,8 @@ public class PostService {
 
             Collections.sort(friendPost);
         }catch (Exception exception){
-            return new postResult(334, null);
+            throw new RunnerException(CommonEnum.GETRANDOMPOSTERROR);
         }
-        return new postResult(200, friendPost);
+        return new postResult(CommonEnum.SUCCESS, friendPost);
     }
 }

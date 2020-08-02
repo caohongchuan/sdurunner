@@ -7,6 +7,8 @@ package com.caohongchuan.sdurunner.web;
  */
 
 import com.caohongchuan.sdurunner.domain.Reaction;
+import com.caohongchuan.sdurunner.exception.CommonEnum;
+import com.caohongchuan.sdurunner.exception.RunnerException;
 import com.caohongchuan.sdurunner.result.Result;
 import com.caohongchuan.sdurunner.result.commitResult;
 import com.caohongchuan.sdurunner.service.CommitSerivce;
@@ -31,8 +33,11 @@ public class CommitController {
     @ResponseBody
     public Result newCommit(Reaction reaction){
         int success = commitSerivce.newCommit(reaction);
-        return new Result(success);
-
+        if(success == 200){
+            return new Result(CommonEnum.SUCCESS);
+        }else{
+            throw new RunnerException(CommonEnum.ADDCOMMITERROR);
+        }
     }
 
     /**
@@ -48,7 +53,11 @@ public class CommitController {
     public Result deleteCommit(@RequestParam("pid")int pid, @RequestParam("nickname")String nickname){
 
         int success = commitSerivce.deleteCommit(pid, nickname);
-        return new Result(success);
+        if(success == 200){
+            return new Result(CommonEnum.SUCCESS);
+        }else{
+            throw new RunnerException(CommonEnum.DELETECOMMITERROR);
+        }
     }
 
     /**
@@ -62,7 +71,11 @@ public class CommitController {
     @ResponseBody
     public Result newLike(Reaction reaction){
         int success = commitSerivce.newLike(reaction);
-        return new Result(success);
+        if(success == 200){
+            return new Result(CommonEnum.SUCCESS);
+        }else{
+            throw new RunnerException(CommonEnum.ADDLIKEERROR);
+        }
 
     }
 
@@ -79,7 +92,11 @@ public class CommitController {
     public Result deleteLike(@RequestParam("pid")int pid, @RequestParam("nickname")String nickname){
 
         int success = commitSerivce.deleteLike(pid, nickname);
-        return new Result(success);
+        if(success == 200){
+            return new Result(CommonEnum.SUCCESS);
+        }else{
+            throw new RunnerException(CommonEnum.DELETELIKEERROR);
+        }
     }
 
 

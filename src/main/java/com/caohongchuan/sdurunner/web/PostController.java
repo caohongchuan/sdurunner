@@ -8,6 +8,8 @@ package com.caohongchuan.sdurunner.web;
 
 
 import com.caohongchuan.sdurunner.domain.Post;
+import com.caohongchuan.sdurunner.exception.CommonEnum;
+import com.caohongchuan.sdurunner.exception.RunnerException;
 import com.caohongchuan.sdurunner.result.Result;
 import com.caohongchuan.sdurunner.result.postResult;
 import com.caohongchuan.sdurunner.service.PostService;
@@ -53,9 +55,9 @@ public class PostController {
         ArrayList<Post> success = null;
         success = postService.getPost(nickname);
         if(success == null){
-            return new postResult(331, success);
+            throw new RunnerException(CommonEnum.GETPOSTERROR);
         }else{
-            return new postResult(200, success);
+            return new postResult(CommonEnum.SUCCESS, success);
         }
 
     }
@@ -74,7 +76,11 @@ public class PostController {
     public Result updatepost(Post post) {
 
         int success = postService.updatePost(post);
-        return new Result(success);
+        if(success == 200){
+            return new Result(CommonEnum.SUCCESS);
+        }else{
+            throw new RunnerException(CommonEnum.UPDATEPOSTERROR);
+        }
     }
 
 

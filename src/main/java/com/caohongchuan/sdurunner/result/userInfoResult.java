@@ -1,6 +1,7 @@
 package com.caohongchuan.sdurunner.result;
 
 import com.caohongchuan.sdurunner.domain.User;
+import com.caohongchuan.sdurunner.exception.BaseErrorInfoInterface;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -13,8 +14,13 @@ import org.springframework.web.bind.annotation.*;
 public class userInfoResult extends Result {
     private User user;
 
-    public userInfoResult(int code, User user){
-        super(code);
+    public userInfoResult(int code, String errormsg, User user) {
+        super(code, errormsg);
+        this.user = user;
+    }
+
+    public userInfoResult(BaseErrorInfoInterface baseErrorInfoInterface, User user){
+        super(baseErrorInfoInterface);
         this.user = user;
     }
 

@@ -1,6 +1,9 @@
 package com.caohongchuan.sdurunner.result;
 
 
+import com.caohongchuan.sdurunner.exception.BaseErrorInfoInterface;
+import com.caohongchuan.sdurunner.exception.CommonEnum;
+
 /**
  * 状态码返回 结果
  * @author caohongchuan
@@ -10,8 +13,16 @@ public class Result {
 
     private int code;
 
-    public Result(int code) {
+    private String errormsg;
+
+    public Result(int code, String errormsg) {
         this.code = code;
+        this.errormsg = errormsg;
+    }
+
+    public Result(BaseErrorInfoInterface baseErrorInfoInterface){
+        this.code = baseErrorInfoInterface.getCode();
+        this.errormsg = baseErrorInfoInterface.getErrormsg();
     }
 
     public int getCode() {
@@ -22,4 +33,11 @@ public class Result {
         this.code = code;
     }
 
+    public String getErrormsg() {
+        return errormsg;
+    }
+
+    public void setErrormsg(String errormsg) {
+        this.errormsg = errormsg;
+    }
 }

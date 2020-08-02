@@ -9,7 +9,10 @@ package com.caohongchuan.sdurunner.service;
 
 import com.caohongchuan.sdurunner.domain.User;
 import com.caohongchuan.sdurunner.domain.userRank;
+import com.caohongchuan.sdurunner.exception.CommonEnum;
+import com.caohongchuan.sdurunner.exception.RunnerException;
 import com.caohongchuan.sdurunner.mapper.UserMapper;
+import com.caohongchuan.sdurunner.result.Result;
 import com.caohongchuan.sdurunner.result.fanResult;
 import com.caohongchuan.sdurunner.result.userInfoResult;
 import com.caohongchuan.sdurunner.result.userRankResult;
@@ -38,12 +41,17 @@ public class UserService {
         //判断名字是否存在
         Integer uid = userMapper.getUserId(nickname);
         if(uid != null){
-            return 301;
+            throw new RunnerException(CommonEnum.USEREXITED);
         }
 
         Date date = new Date();
         java.sql.Date regtime = new java.sql.Date(date.getTime());
-        userMapper.insert(nickname, password, regtime);
+
+        try{
+            userMapper.insert(nickname, password, regtime);
+        }catch (Exception e){
+            throw new RunnerException(CommonEnum.USERREGISTERERROR);
+        }
 
         return 200;
     }
@@ -59,14 +67,14 @@ public class UserService {
         String passwd = userMapper.getPassword(nickname);
         //用户名不存在
         if(passwd == null){
-            return 303;
+            throw new RunnerException(CommonEnum.USERUNEXITED);
         }
 
         if(passwd.equals(password)){
             return 200;
         }else{
             //用户密码错误
-            return 302;
+            throw new RunnerException(CommonEnum.PASSWORDERROR);
         }
     }
 
@@ -98,9 +106,9 @@ public class UserService {
 
 
         if(res == null){
-            return new userInfoResult(303, res);
+            return new userInfoResult(CommonEnum.USERUNEXITED, res);
         }else{
-            return new userInfoResult(200, res);
+            return new userInfoResult(CommonEnum.SUCCESS, res);
         }
     }
 
@@ -110,14 +118,14 @@ public class UserService {
      * @return @code{true} : 200  else @code{false}
      */
 
-    public int updateUserInfo(User user){
+    public Result updateUserInfo(User user){
         int success = userMapper.updateUserInfo(user);
         if(success > 0){
             //更新超过1条数据，成功
-            return 200;
+            return new Result(CommonEnum.SUCCESS);
         }else{
             //个人信息更新失败
-            return 310;
+            throw new RunnerException(CommonEnum.USERUPDATEERROR);
         }
     }
 
@@ -128,20 +136,20 @@ public class UserService {
      * @return @code{true} : 200  else @code{false}
      */
 
-    public int newFollow(String nickname1, String nickname2){
+    public Result newFollow(String nickname1, String nickname2){
         Integer uid = userMapper.getUserId(nickname1);
         Integer tarid = userMapper.getUserId(nickname2);
         if(uid == null || tarid == null){
             //用户不存在
-            return 303;
+            throw new RunnerException(CommonEnum.USERUNEXITED);
         }
         Date date = new Date();
         java.sql.Date sqlDate = new java.sql.Date(date.getTime());
         int success = userMapper.newFollow(uid, tarid, sqlDate);
         if(success > 0){
-            return 200;
+            return new Result(CommonEnum.SUCCESS);
         }else{
-            return 320;
+            throw new RunnerException(CommonEnum.ADDLIKEERROR);
         }
     }
 
@@ -152,19 +160,19 @@ public class UserService {
      * @return @code{true} : 200  else @code{false}
      */
 
-    public int deleteFollow(String nickname1, String nickname2){
+    public Result deleteFollow(String nickname1, String nickname2){
         Integer uid = userMapper.getUserId(nickname1);
         Integer tarid = userMapper.getUserId(nickname2);
         if(uid == null || tarid == null){
             //用户不存在
-            return 303;
+            throw new RunnerException(CommonEnum.USERUNEXITED);
         }
         int success = userMapper.deleteFollow(uid, tarid);
 
         if(success > 0){
-            return 200;
+            return new Result(CommonEnum.SUCCESS);
         }else{
-            return 321;
+            throw new RunnerException(CommonEnum.CANCELATTENTIONERROR);
         }
     }
 
@@ -178,7 +186,7 @@ public class UserService {
 
         Integer tarid = userMapper.getUserId(nickname);
         if(tarid == null){
-            return new fanResult(303, null);
+            return new fanResult(CommonEnum.USERUNEXITED, null);
         }
         ArrayList<userRank> nameList;
         try {
@@ -193,9 +201,9 @@ public class UserService {
                 nameList.add(i, new userRank(uid, username, rundistance, profilepic));
             }
         }catch (Exception exception){
-            return new fanResult(322, null);
+            return new fanResult(CommonEnum.GETFANERROR, null);
         }
-        return new fanResult(200, nameList);
+        return new fanResult(CommonEnum.SUCCESS, nameList);
 
     }
 
@@ -208,7 +216,7 @@ public class UserService {
     public fanResult getFollow(String nickname){
         Integer uid = userMapper.getUserId(nickname);
         if(uid == null){
-            return new fanResult(303, null);
+            throw new RunnerException(CommonEnum.USERUNEXITED);
         }
 
         ArrayList<userRank> nameList;
@@ -225,10 +233,10 @@ public class UserService {
                 nameList.add(i, new userRank(uidF, username, rundistance, profilepic));
             }
         }catch (Exception exception){
-            return new fanResult(323, null);
+            throw new RunnerException(CommonEnum.GETFOCUSERROR);
         }
 
-        return new fanResult(200, nameList);
+        return new fanResult(CommonEnum.SUCCESS, nameList);
     }
 
     /**
@@ -240,7 +248,7 @@ public class UserService {
     public userRankResult getFriendRank(String nickname){
         Integer uid = userMapper.getUserId(nickname);
         if(uid == null){
-            return new userRankResult(303, null);
+            return new userRankResult(CommonEnum.USERUNEXITED, null);
         }
         ArrayList<userRank> userrank;
 
@@ -273,10 +281,10 @@ public class UserService {
 
             Collections.sort(userrank);
         }catch (Exception exception){
-            return new userRankResult(324, null);
+            return new userRankResult(CommonEnum.GETFRIENDRANKERROR, null);
         }
 
-        return new userRankResult(200, userrank);
+        return new userRankResult(CommonEnum.SUCCESS, userrank);
     }
 
 }

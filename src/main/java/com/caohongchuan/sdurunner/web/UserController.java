@@ -1,6 +1,8 @@
 package com.caohongchuan.sdurunner.web;
 
 import com.caohongchuan.sdurunner.domain.User;
+import com.caohongchuan.sdurunner.exception.CommonEnum;
+import com.caohongchuan.sdurunner.exception.RunnerException;
 import com.caohongchuan.sdurunner.result.Result;
 import com.caohongchuan.sdurunner.result.fanResult;
 import com.caohongchuan.sdurunner.result.userInfoResult;
@@ -39,7 +41,11 @@ public class UserController {
     @ResponseBody
     public Result register(@RequestParam("nickname")String nickname, @RequestParam("password")String password) {
         int success = userService.createUser(nickname, password);
-        return new Result(success);
+        if(success == 200){
+            return new Result(CommonEnum.SUCCESS);
+        }else{
+            throw new RunnerException(CommonEnum.USERREGISTERERROR);
+        }
     }
 
     /**
@@ -61,7 +67,11 @@ public class UserController {
         if(storedName == null){
             session.setAttribute("user", nickname);
         }
-        return new Result(success);
+        if(success == 200){
+            return new Result(CommonEnum.SUCCESS);
+        }else{
+            throw new RunnerException(CommonEnum.PASSWORDERROR);
+        }
     }
 
     /**
@@ -86,8 +96,7 @@ public class UserController {
     @RequestMapping(value = "/updateuserinfo",method = RequestMethod.POST)
     @ResponseBody
     public Result updateUserInfo(User user) {
-        int success = userService.updateUserInfo(user);
-        return new Result(success);
+        return userService.updateUserInfo(user);
     }
 
     /**
@@ -100,8 +109,7 @@ public class UserController {
     @RequestMapping(value = "/newfollow",method = RequestMethod.POST)
     @ResponseBody
     public Result newFollow(@RequestParam("nickname1")String nickname1, @RequestParam("nickname2")String nickname2) {
-        int success = userService.newFollow(nickname1, nickname2);
-        return new Result(success);
+        return userService.newFollow(nickname1, nickname2);
     }
 
     /**
@@ -114,8 +122,7 @@ public class UserController {
     @RequestMapping(value = "/deletefollow",method = RequestMethod.POST)
     @ResponseBody
     public Result deleteFollow(@RequestParam("nickname1")String nickname1, @RequestParam("nickname2")String nickname2) {
-        int success = userService.deleteFollow(nickname1, nickname2);
-        return new Result(success);
+        return userService.deleteFollow(nickname1, nickname2);
     }
 
 
