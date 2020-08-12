@@ -4,6 +4,8 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.LinkedList;
+
 @SpringBootApplication
 @MapperScan(basePackages = "com.caohongchuan.sdurunner.mapper")
 
@@ -12,7 +14,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @since 1.0
  */
 public class SdurunnerApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(SdurunnerApplication.class, args);
     }
